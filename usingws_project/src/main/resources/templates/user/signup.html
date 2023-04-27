@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="/user/signup.do" method="post">
+        <h2>Sign Up</h2>
+        <div>
+            <label>
+                <span>아이디 : </span>
+                <input type="text" name="userId">
+            </label>
+            <div id="idCheck"></div>
+        </div>
+        <div>
+            <label>
+                <span>비밀번호 : </span>
+                <input type="password" name="userPw">
+            </label>
+            <div id="pwCheck"></div>
+        </div>
+        <button>회원가입</button>
+        <button type="reset">초기화</button>
+    </form>
+</body>
+</html>
