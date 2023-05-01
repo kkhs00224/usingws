@@ -58,9 +58,9 @@ public class UserController {
             if (loginUser != null){
                 session.removeAttribute("loginUser");
             }
-        return "redirect:/user/login.do";
+        return "redirect:user/login.do";
         }else{
-            return "redirect:/user/signup.do";
+            return "redirect:user/signup.do";
         }
     }
 

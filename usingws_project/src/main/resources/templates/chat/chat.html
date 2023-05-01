@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h2>hi</h2>
+    <div>
+        <div>
+            <label><b>채팅방</b></label>
+        </div>
+        <div>
+            <div id="msgArea"></div>
+            <div>
+                <div>
+                    <input type="text" id="msg">
+                    <div>
+                        <button type="button" id="button-send">보내기</button>
+                        <button type="button" id="disConn">연결 끊기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        const username = [[${session.loginUser.userId}]];
+        let disConn = document.querySelector("#disConn");
+        let sendButton = document.querySelector("#button-send");
+        const webSocket = new WebSocket("ws://localhost:8002/ws/chat");
+
+        webSocket.onmessage = onMessage;
+        webSocket.onopen = onOpen;
+        // webSocket.onclose = onClose;
+
+        disConn.onclick=()=>{
+            webSocket.send(username + ": 님이 방을 나가셨습니다.");
+            webSocket.close(1000);
+        }
+
+        sendButton.onclick=()=>{
+            send();
+        }
+
+
+
+        function send(){
+            let msg = document.querySelector("#msg");
+
+            console.log(username + " : " + msg.value);
+            webSocket.send(username + " : " + msg.value);
+            msg.value = "";
+        }
+
+        function onOpen(evt){
+            let str = username + ": 님이 입장하였습니다.";
+            webSocket.send(str);
+        }
+
+        function onMessage(msg){
+            let data = msg.data;
+            let sessionId = null;
+
+            let message = null;
+            let arr = data.split(":");
+
+            for(let i=0; i<arr.length; i++){
+                console.log("arr[" + i + "]: " + arr[i]);
+            }
+
+            let curSession = username;
+
+            //현재 세션에 로그인한 사람
+            console.log("curSession : "+ curSession);
+            sessionId = arr[0];
+            message = arr[1];
+
+            console.log("sessionId : " + sessionId);
+            console.log("curSession : " + curSession);
+
+            if(sessionId === curSession){
+                let msgArea = document.querySelector("#msgArea");
+                let elem1 = document.createElement("div");
+                let elem2 = document.createElement("div");
+                let elem3 = document.createElement("b");
+                elem3.innerText = sessionId + " : " + message;
+
+                elem2.appendChild(elem3);
+                elem1.appendChild(elem2);
+                msgArea.insertBefore(elem1, null);
+            }else{
+                let msgArea = document.querySelector("#msgArea");
+                let elem1 = document.createElement("div");
+                let elem2 = document.createElement("div");
+                let elem3 = document.createElement("b");
+                elem3.innerText = sessionId + " : " + message;
+
+                elem2.appendChild(elem3);
+                elem1.appendChild(elem2);
+                msgArea.insertBefore(elem1, null);
+            }
+        }
+
+    </script>
+</body>
+</html>

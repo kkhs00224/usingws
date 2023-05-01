@@ -3,13 +3,15 @@
 <div th:fragment="header">
     <h3>header</h3>
     <ul>
-        <th:block th:if="${session.loginUser}">
-            <li><a th:href="@{/user/mypage.do}" th:text="${#strings.substringAfter(session.loginUser.userId,5)}"></a></li>
+        <th:block th:if="${session.loginUser != null}">
+            <li><a th:href="@{/user/mypage.do}" th:text="${session.loginUser.userId}"></a></li>
+            <li><a th:href="@{/chat}">채팅방</a></li>
         </th:block>
         <th:block th:unless="${session.loginUser}">
             <li><a th:href="@{/user/login.do}">로그인/회원가입</a></li>
+            <li>채팅방</li>
         </th:block>
-        <li>123</li>
+
         <li>456</li>
         <li>789</li>
     </ul>
