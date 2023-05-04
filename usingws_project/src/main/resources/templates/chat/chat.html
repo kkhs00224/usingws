@@ -12,19 +12,19 @@
         </div>
         <div>
             <div id="msgArea"></div>
-            <div>
+            <form onsubmit="send()" action="javascript:void(0)">
                 <div>
-                    <input type="text" id="msg">
+                    <label for="msg">입력창</label><input type="text" id="msg">
                     <div>
                         <button type="button" id="button-send">보내기</button>
                         <button type="button" id="disConn">연결 끊기</button>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
     <script th:inline="javascript">
-        const username = [[${session.loginUser.userId}]];
+        let username = [[${user}]];
         let disConn = document.querySelector("#disConn");
         let sendButton = document.querySelector("#button-send");
         const webSocket = new WebSocket("ws://localhost:8002/ws/chat");

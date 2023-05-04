@@ -42,6 +42,13 @@ public class UserController {
             return "redirect:/user/login.do";
         }
     }
+    @PostMapping("/logout.do")
+    public String logout(User user,
+                         @SessionAttribute User loginUser,
+                         HttpSession session){
+        session.removeAttribute("loginUser");
+        return "redirect:/";
+    }
 
     @GetMapping("/signup.do")
     public String signup(){
