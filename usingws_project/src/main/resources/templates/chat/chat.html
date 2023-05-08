@@ -1,30 +1,35 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <h2>hi</h2>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content" id="chat-content">
     <div>
-        <div>
-            <label><b>채팅방</b></label>
+        <div class="flex jc-between">
+            <h2>채팅방</h2>
+            <button type="button" id="disConn" class="btn-none" title="연결 끊기">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backspace-reverse-fill" viewBox="0 0 16 16">
+                    <path d="M0 3a2 2 0 0 1 2-2h7.08a2 2 0 0 1 1.519.698l4.843 5.651a1 1 0 0 1 0 1.302L10.6 14.3a2 2 0 0 1-1.52.7H2a2 2 0 0 1-2-2V3zm9.854 2.854a.5.5 0 0 0-.708-.708L7 7.293 4.854 5.146a.5.5 0 1 0-.708.708L6.293 8l-2.147 2.146a.5.5 0 0 0 .708.708L7 8.707l2.146 2.147a.5.5 0 0 0 .708-.708L7.707 8l2.147-2.146z"/>
+                </svg>
+            </button>
         </div>
         <div>
-            <div id="msgArea"></div>
+            <div id="msgArea" class="fl-di-col"></div>
             <form onsubmit="send()" action="javascript:void(0)">
-                <div>
-                    <label for="msg">입력창</label><input type="text" id="msg">
-                    <div>
+                    <div class="flex" id="inputWindow">
+                        <label>
+                            <textarea id="msg"></textarea>
+                        </label>
                         <button type="button" id="button-send">보내기</button>
-                        <button type="button" id="disConn">연결 끊기</button>
                     </div>
-                </div>
             </form>
         </div>
     </div>
     <script th:inline="javascript">
-        let username = [[${user}]];
+        let userKey = [[${user}]]
+        let username = userKey.split("++")[0];
         let disConn = document.querySelector("#disConn");
         let sendButton = document.querySelector("#button-send");
         const webSocket = new WebSocket("ws://localhost:8002/ws/chat");
@@ -48,12 +53,12 @@
             let msg = document.querySelector("#msg");
 
             console.log(username + " : " + msg.value);
-            webSocket.send(username + " : " + msg.value);
+            webSocket.send(userKey + " : " + msg.value);
             msg.value = "";
         }
 
         function onOpen(evt){
-            let str = username + ": 님이 입장하였습니다.";
+            let str = username + " 님이 입장하였습니다.";
             webSocket.send(str);
         }
 
@@ -68,32 +73,38 @@
                 console.log("arr[" + i + "]: " + arr[i]);
             }
 
-            let curSession = username;
+            let curSession = userKey;
 
             //현재 세션에 로그인한 사람
             console.log("curSession : "+ curSession);
-            sessionId = arr[0];
+            sessionId = arr[0].trim();
             message = arr[1];
 
             console.log("sessionId : " + sessionId);
             console.log("curSession : " + curSession);
+            let msgArea = document.querySelector("#msgArea");
+            let elem1 = document.createElement("div");
+            elem1.classList.add("margin-x-5");
+            let elem2 = document.createElement("div");
+            let elem3 = document.createElement("div");
+            elem3.classList.add("chat-box");
 
             if(sessionId === curSession){
-                let msgArea = document.querySelector("#msgArea");
-                let elem1 = document.createElement("div");
-                let elem2 = document.createElement("div");
-                let elem3 = document.createElement("b");
-                elem3.innerText = sessionId + " : " + message;
+                elem3.innerText = message + " : " + sessionId.split("++")[0];
 
                 elem2.appendChild(elem3);
                 elem1.appendChild(elem2);
+                elem1.classList.add("chat-right");
+                msgArea.insertBefore(elem1, null);
+            }else if(sessionId === username + " 님이 입장하였습니다."){
+                elem3.innerText = sessionId;
+
+                elem2.appendChild(elem3);
+                elem1.appendChild(elem2);
+                elem1.classList.add("chat-center");
                 msgArea.insertBefore(elem1, null);
             }else{
-                let msgArea = document.querySelector("#msgArea");
-                let elem1 = document.createElement("div");
-                let elem2 = document.createElement("div");
-                let elem3 = document.createElement("b");
-                elem3.innerText = sessionId + " : " + message;
+                elem3.innerText = sessionId.split("++")[0] + " : " + message;
 
                 elem2.appendChild(elem3);
                 elem1.appendChild(elem2);
@@ -101,6 +112,20 @@
             }
         }
 
+        let msg = document.querySelector("#msg");
+        msg.addEventListener("keydown",function(event){
+            if(event.keyCode === 13 && !event.shiftKey){
+                event.preventDefault();
+                sendButton.click();
+            }else if(event.keyCode === 13 && event.shiftKey) {
+                console.log("??")
+                event.preventDefault();
+                // let test = msg.value;
+                msg.value += "\n";
+            }
+        })
+
+
     </script>
-</body>
+</div>
 </html>
