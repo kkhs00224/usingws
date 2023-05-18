@@ -20,7 +20,7 @@ public class ChatHandler extends TextWebSocketHandler {
         String payload = message.getPayload(); // 메시지 데이터를 얻는다.
         log.info("payload: " + payload); // 얻은 메시지를 로그로 확인
 
-        for(WebSocketSession sess : list){ // 향상된 for문을 통해 리스트의 각 세션에게 메시지 전송
+        for(WebSocketSession sess : list){ // 리스트의 각 세션에게 메시지 전송
             sess.sendMessage(message);
         }
     }

@@ -15,18 +15,8 @@ import java.util.UUID;
 @Log4j2
 public class ChatController {
     @GetMapping("/chat")
-    public String charGET(@SessionAttribute(required = false) User loginUser,
-                          Model model){
+    public String charGET(){
         log.info("@ChatController, chat Get()");
-        String user = "";
-        UUID uniqueKey = UUID.randomUUID();
-        if(loginUser != null){
-            user = loginUser.getUserId();
-        }else{
-            user = "Unknown++"+uniqueKey;
-        }
-        model.addAttribute("user", user);
-        model.addAttribute("uniqueKey", uniqueKey);
         return "chat/chat";
     }
 }

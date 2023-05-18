@@ -4,7 +4,6 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
-
 <div layout:fragment="content" id="chat-content">
     <div>
         <div class="flex jc-between">
@@ -27,9 +26,10 @@
             </form>
         </div>
     </div>
-    <script th:inline="javascript">
-        let userKey = [[${user}]]
-        let username = userKey.split("++")[0];
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.js"></script>
+    <script th:inline="javascript" >
+        const username = [[${#authentication.principal.username}]];
+        // let sockjs = new SockJS("/ws/chat", null, {transports: ["websocket","xhr-streaming", "xhr-polling"]})
         let disConn = document.querySelector("#disConn");
         let sendButton = document.querySelector("#button-send");
         const webSocket = new WebSocket("ws://localhost:8002/ws/chat");
@@ -49,11 +49,12 @@
 
 
 
+
         function send(){
             let msg = document.querySelector("#msg");
 
             console.log(username + " : " + msg.value);
-            webSocket.send(userKey + " : " + msg.value);
+            webSocket.send(username + " : " + msg.value);
             msg.value = "";
         }
 
@@ -73,7 +74,7 @@
                 console.log("arr[" + i + "]: " + arr[i]);
             }
 
-            let curSession = userKey;
+            let curSession = username;
 
             //현재 세션에 로그인한 사람
             console.log("curSession : "+ curSession);
@@ -90,11 +91,12 @@
             elem3.classList.add("chat-box");
 
             if(sessionId === curSession){
-                elem3.innerText = message + " : " + sessionId.split("++")[0];
+                elem3.innerText = message;
 
                 elem2.appendChild(elem3);
                 elem1.appendChild(elem2);
                 elem1.classList.add("chat-right");
+                elem3.style.background = "lightgray";
                 msgArea.insertBefore(elem1, null);
             }else if(sessionId === username + " 님이 입장하였습니다."){
                 elem3.innerText = sessionId;
@@ -104,10 +106,12 @@
                 elem1.classList.add("chat-center");
                 msgArea.insertBefore(elem1, null);
             }else{
-                elem3.innerText = sessionId.split("++")[0] + " : " + message;
+                elem3.innerText = sessionId + " : " + message;
 
                 elem2.appendChild(elem3);
                 elem1.appendChild(elem2);
+                elem1.classList.add("chat-left");
+                elem3.style.background = "LightYellow";
                 msgArea.insertBefore(elem1, null);
             }
         }

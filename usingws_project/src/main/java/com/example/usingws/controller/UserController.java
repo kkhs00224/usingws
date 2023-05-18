@@ -28,48 +28,48 @@ public class UserController {
         return "/user/test";
     }
 
-    @GetMapping("/login.do")
-    public String login(){return "/user/login"; }
-
-    @PostMapping("/login.do")
-    public String login(User user,
-                        HttpSession session){
-        Optional<User> accessUser = userRepository.findByUserIdAndUserPw(user.getUserId(), user.getUserPw());
-        if (accessUser.isPresent()){
-            session.setAttribute("loginUser", user);
-            return "redirect:/";
-        }else{
-            return "redirect:/user/login.do";
-        }
-    }
-    @PostMapping("/logout.do")
-    public String logout(User user,
-                         @SessionAttribute User loginUser,
-                         HttpSession session){
-        session.removeAttribute("loginUser");
-        return "redirect:/";
-    }
-
-    @GetMapping("/signup.do")
-    public String signup(){
-        return "/user/signup";
-    }
-
-    @PostMapping("/signup.do")
-    public String signup(User user,
-                         @SessionAttribute(required = false) User loginUser,
-                         HttpSession session){
-        if(!userRepository.existsById(user.getUserId())){
-            User newUser = userRepository.save(user);
-            log.info("Trying Sign Up " + newUser);
-            if (loginUser != null){
-                session.removeAttribute("loginUser");
-            }
-        return "redirect:user/login.do";
-        }else{
-            return "redirect:user/signup.do";
-        }
-    }
+//    @GetMapping("/login.do")
+//    public String login(){return "/user/login"; }
+//
+//    @PostMapping("/login.do")
+//    public String login(User user,
+//                        HttpSession session){
+//        Optional<User> accessUser = userRepository.findByUserIdAndUserPw(user.getUserId(), user.getUserPw());
+//        if (accessUser.isPresent()){
+//            session.setAttribute("loginUser", user);
+//            return "redirect:/";
+//        }else{
+//            return "redirect:/user/login.do";
+//        }
+//    }
+//    @PostMapping("/logout.do")
+//    public String logout(User user,
+//                         @SessionAttribute User loginUser,
+//                         HttpSession session){
+//        session.removeAttribute("loginUser");
+//        return "redirect:/";
+//    }
+//
+//    @GetMapping("/signup.do")
+//    public String signup(){
+//        return "/user/signup";
+//    }
+//
+//    @PostMapping("/signup.do")
+//    public String signup(User user,
+//                         @SessionAttribute(required = false) User loginUser,
+//                         HttpSession session){
+//        if(!userRepository.existsById(user.getUserId())){
+//            User newUser = userRepository.save(user);
+//            log.info("Trying Sign Up " + newUser);
+//            if (loginUser != null){
+//                session.removeAttribute("loginUser");
+//            }
+//        return "redirect:user/login.do";
+//        }else{
+//            return "redirect:user/signup.do";
+//        }
+//    }
 
 
 }
